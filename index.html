@@ -3,224 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مملكة السلاطين</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#764ba2">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="مملكة السلاطين">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        header {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 30px;
-            color: white;
-            text-align: center;
-        }
-        h1 { font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .resources { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
-        .resource { background: rgba(255,255,255,0.2); padding: 15px 30px; border-radius: 10px; font-size: 1.2em; font-weight: bold; }
-        main { padding: 30px; }
-        .kingdom { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 25px; border-radius: 15px; margin-bottom: 30px; text-align: center; }
-        .palace { margin-top: 15px; }
-        .palace p { font-size: 1.3em; margin-bottom: 15px; font-weight: bold; }
-        .buildings { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .building { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .building:hover { transform: translateY(-5px); }
-        .building h3 { font-size: 1.5em; margin-bottom: 15px; color: #333; }
-        .building p { margin: 10px 0; font-size: 1.1em; color: #555; }
-        button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 1em; cursor: pointer; margin-top: 10px; transition: all 0.3s; font-weight: bold; }
-        button:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        button:active { transform: scale(0.95); }
-        .actions { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .save-btn { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-        .reset-btn { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
-        footer { background: #333; color: white; text-align: center; padding: 15px; }
-        #install-btn { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 1.1em; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 999; font-weight: bold; }
-        @media (max-width: 768px) {
-            h1 { font-size: 1.8em; }
-            .resources { gap: 15px; }
-            .resource { padding: 10px 20px; font-size: 1em; }
-        }
-    </style>
+    <title>🏰 مملكة المغامرات - Kingdom Adventures</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🏰 مملكة السلاطين</h1>
-            <div class="resources">
-                <div class="resource"><span>💰 ذهب:</span> <span id="gold">1000</span></div>
-                <div class="resource"><span>🌾 طعام:</span> <span id="food">500</span></div>
-                <div class="resource"><span>⚔️ جنود:</span> <span id="soldiers">10</span></div>
+    <!-- شاشة التحميل -->
+    <div id="loadingScreen" class="screen active">
+        <div class="loading-content">
+            <h1 class="game-title">🏰 مملكة المغامرات</h1>
+            <div class="loading-bar">
+                <div class="loading-fill" id="loadingFill"></div>
             </div>
-        </header>
-        <main>
-            <div class="kingdom">
-                <h2>🏛️ قصر المملكة</h2>
-                <div class="palace">
-                    <p>المستوى: <span id="palace-level">1</span></p>
-                    <button onclick="upgradePalace()">⬆️ ترقية القصر (500 ذهب)</button>
-                </div>
-            </div>
-            <div class="buildings">
-                <div class="building">
-                    <h3>🏰 القلعة</h3>
-                    <p>المستوى: <span id="castle-level">1</span></p>
-                    <p>الدفاع: <span id="castle-defense">10</span></p>
-                    <button onclick="upgradeBuilding('castle')">⬆️ ترقية (300 ذهب)</button>
-                </div>
-                <div class="building">
-                    <h3>🌾 المزرعة</h3>
-                    <p>المستوى: <span id="farm-level">1</span></p>
-                    <p>إنتاج: <span id="farm-production">5</span> طعام/دقيقة</p>
-                    <button onclick="upgradeBuilding('farm')">⬆️ ترقية (200 ذهب)</button>
-                </div>
-                <div class="building">
-                    <h3>⛏️ منجم الذهب</h3>
-                    <p>المستوى: <span id="mine-level">1</span></p>
-                    <p>إنتاج: <span id="mine-production">10</span> ذهب/دقيقة</p>
-                    <button onclick="upgradeBuilding('mine')">⬆️ ترقية (250 ذهب)</button>
-                </div>
-                <div class="building">
-                    <h3>🛡️ الثكنة العسكرية</h3>
-                    <p>المستوى: <span id="barracks-level">1</span></p>
-                    <button onclick="trainSoldier()">⚔️ تدريب جندي (100 ذهب، 50 طعام)</button>
-                </div>
-            </div>
-            <div class="actions">
-                <button onclick="saveGame()" class="save-btn">💾 حفظ اللعبة</button>
-                <button onclick="resetGame()" class="reset-btn">🔄 إعادة تعيين</button>
-            </div>
-        </main>
-        <footer>
-            <p>⏰ آخر تحديث: <span id="last-update"></span></p>
-        </footer>
+            <p class="loading-text">جاري التحميل...</p>
+        </div>
     </div>
 
-    <button id="install-btn" onclick="installApp()">📲 تثبيت التطبيق</button>
+    <!-- شاشة القائمة الرئيسية -->
+    <div id="mainMenu" class="screen">
+        <div class="menu-container">
+            <h1 class="animated-title">🏰 مملكة المغامرات</h1>
+            <p class="subtitle">⚔️ ادخل القلعة واهزم الوحوش! 🐉</p>
+            <div class="menu-buttons">
+                <button class="btn-primary" onclick="showMap()">
+                    <span>🗺️</span> ابدأ اللعب
+                </button>
+                <button class="btn-secondary" onclick="showInstructions()">
+                    <span>📜</span> التعليمات
+                </button>
+                <button class="btn-secondary" onclick="showSettings()">
+                    <span>⚙️</span> الإعدادات
+                </button>
+            </div>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <span class="stat-icon">⭐</span>
+                    <div class="stat-info">
+                        <p class="stat-label">أعلى نقاط</p>
+                        <p class="stat-value" id="highScore">0</p>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-icon">💰</span>
+                    <div class="stat-info">
+                        <p class="stat-label">إجمالي العملات</p>
+                        <p class="stat-value" id="totalCoins">0</p>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-icon">🏆</span>
+                    <div class="stat-info">
+                        <p class="stat-label">المراحل المكتملة</p>
+                        <p class="stat-value" id="completedLevels">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        let gameData = {
-            gold: 1000, food: 500, soldiers: 10,
-            palace: { level: 1 },
-            buildings: {
-                castle: { level: 1, defense: 10 },
-                farm: { level: 1, production: 5 },
-                mine: { level: 1, production: 10 },
-                barracks: { level: 1 }
-            },
-            lastUpdate: Date.now()
-        };
+    <!-- شاشة التعليمات -->
+    <div id="instructions" class="screen">
+        <div class="menu-container">
+            <h2>📜 كيفية اللعب</h2>
+            <div class="instructions-grid">
+                <div class="instruction-card">
+                    <div class="instruction-icon">⌨️</div>
+                    <h3>التحكم</h3>
+                    <ul>
+                        <li><kbd>Space</kbd> أو <kbd>↑</kbd> للقفز</li>
+                        <li><kbd>→</kbd> <kbd>←</kbd> للحركة</li>
+                        <li><kbd>Shift</kbd> للجري السريع</li>
+                    </ul>
+                </div>
+                <div class="instruction-card">
+                    <div class="instruction-icon">🎯</div>
+                    <h3>الأهداف</h3>
+                    <ul>
+                        <li>💰 اجمع العملات الذهبية</li>
+                        <li>👹 تجنب الوحوش الخطيرة</li>
+                        <li>⚠️ تخطى العقبات</li>
+                        <li>🏰 اصل إلى القلعة</li>
+                    </ul>
+                </div>
+                <div class="instruction-card">
+                    <div class="instruction-icon">👾</div>
+                    <h3>الأعداء</h3>
+                    <ul>
+                        <li>👹 <strong>الغول:</strong> عدو بطيء</li>
+                        <li>💀 <strong>الهيكل:</strong> عدو متوسط</li>
+                        <li>🦇 <strong>الخفاش:</strong> عدو طائر</li>
+                    </ul>
+                </div>
+                <div class="instruction-card">
+                    <div class="instruction-icon">⚠️</div>
+                    <h3>العقبات</h3>
+                    <ul>
+                        <li>⚡ <strong>الأشواك:</strong> تسبب ضرر</li>
+                        <li>🪨 <strong>الصخور:</strong> عليك تجاوزها</li>
+                        <li>🕳️ <strong>الحفر:</strong> موت فوري!</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="showMainMenu()">
+                <span>◀️</span> رجوع
+            </button>
+        </div>
+    </div>
 
-        window.onload = function() { loadGame(); updateDisplay(); startProduction(); updateTime(); };
+    <!-- شاشة الإعدادات -->
+    <div id="settings" class="screen">
+        <div class="menu-container">
+            <h2>⚙️ الإعدادات</h2>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label>🔊 الصوت</label>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                    <span id="volumeValue">50%</span>
+                </div>
+                <div class="setting-item">
+                    <label>🎵 الموسيقى</label>
+                    <input type="checkbox" id="musicToggle" checked>
+                </div>
+                <div class="setting-item">
+                    <label>🎮 التحكم باللمس</label>
+                    <input type="checkbox" id="touchControls" checked>
+                </div>
+                <div class="setting-item">
+                    <button class="btn-danger" onclick="resetProgress()">
+                        🗑️ إعادة تعيين التقدم
+                    </button>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="showMainMenu()">
+                <span>◀️</span> رجوع
+            </button>
+        </div>
+    </div>
 
-        function updateDisplay() {
-            document.getElementById('gold').textContent = Math.floor(gameData.gold);
-            document.getElementById('food').textContent = Math.floor(gameData.food);
-            document.getElementById('soldiers').textContent = gameData.soldiers;
-            document.getElementById('palace-level').textContent = gameData.palace.level;
-            document.getElementById('castle-level').textContent = gameData.buildings.castle.level;
-            document.getElementById('castle-defense').textContent = gameData.buildings.castle.defense;
-            document.getElementById('farm-level').textContent = gameData.buildings.farm.level;
-            document.getElementById('farm-production').textContent = gameData.buildings.farm.production;
-            document.getElementById('mine-level').textContent = gameData.buildings.mine.level;
-            document.getElementById('mine-production').textContent = gameData.buildings.mine.production;
-            document.getElementById('barracks-level').textContent = gameData.buildings.barracks.level;
-        }
+    <!-- شاشة الخريطة -->
+    <div id="mapScreen" class="screen">
+        <div class="map-container">
+            <h2 class="map-title">🗺️ خريطة المملكة</h2>
+            <div class="map-world">
+                <div class="map-path-container">
+                    <!-- المرحلة 1 -->
+                    <div class="map-level completed" onclick="startLevel(1)" data-level="1">
+                        <div class="level-badge">1</div>
+                        <div class="level-icon">🌳</div>
+                        <p class="level-name">الغابة المظلمة</p>
+                        <div class="level-stars" id="stars-1">
+                            <span>⭐⭐⭐</span>
+                        </div>
+                        <div class="level-coins">💰 <span id="coins-1">0</span>/12</div>
+                    </div>
+                    
+                    <div class="map-path"></div>
+                    
+                    <!-- المرحلة 2 -->
+                    <div class="map-level locked" onclick="startLevel(2)" data-level="2">
+                        <div class="level-badge">2</div>
+                        <div class="level-icon">⛰️</div>
+                        <p class="level-name">جبل الأشباح</p>
+                        <div class="level-stars" id="stars-2">
+                            <span>☆☆☆</span>
+                        </div>
+                        <div class="level-coins">💰 <span id="coins-2">0</span>/12</div>
+                    </div>
+                    
+                    <div class="map-path"></div>
+                    
+                    <!-- المرحلة 3 -->
+                    <div class="map-level locked" onclick="startLevel(3)" data-level="3">
+                        <div class="level-badge">3</div>
+                        <div class="level-icon">🏜️</div>
+                        <p class="level-name">الصحراء المحرقة</p>
+                        <div class="level-stars" id="stars-3">
+                            <span>☆☆☆</span>
+                        </div>
+                        <div class="level-coins">💰 <span id="coins-3">0</span>/12</div>
+                    </div>
+                    
+                    <div class="map-path"></div>
+                    
+                    <!-- المرحلة 4 -->
+                    <div class="map-level locked" onclick="startLevel(4)" data-level="4">
+                        <div class="level-badge">4</div>
+                        <div class="level-icon">🏰</div>
+                        <p class="level-name">القلعة المظلمة</p>
+                        <div class="level-stars" id="stars-4">
+                            <span>☆☆☆</span>
+                        </div>
+                        <div class="level-coins">💰 <span id="coins-4">0</span>/14</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-secondary map-back-btn" onclick="showMainMenu()">
+                <span>◀️</span> القائمة الرئيسية
+            </button>
+        </div>
+    </div>
 
-        function upgradePalace() {
-            const cost = 500 * gameData.palace.level;
-            if (gameData.gold >= cost) { gameData.gold -= cost; gameData.palace.level++; updateDisplay(); showMessage('✅ تم ترقية القصر!'); }
-            else showMessage('❌ ذهب غير كافي!');
-        }
+    <!-- شاشة اللعب -->
+    <div id="gameScreen" class="screen">
+        <!-- HUD - واجهة المعلومات -->
+        <div class="hud">
+            <div class="hud-left">
+                <div class="health-container">
+                    <span class="health-icon">❤️</span>
+                    <div class="health-bar">
+                        <div class="health-fill" id="healthBar"></div>
+                        <span class="health-text" id="healthText">100</span>
+                    </div>
+                </div>
+                <div class="coin-display">
+                    <span class="coin-icon">💰</span>
+                    <span class="coin-count" id="gameCoins">0</span>
+                </div>
+            </div>
+            
+            <div class="hud-center">
+                <h3 class="level-title" id="levelName">المرحلة 1</h3>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar"></div>
+                    </div>
+                    <span class="progress-text" id="progressText">0%</span>
+                </div>
+            </div>
+            
+            <div class="hud-right">
+                <div class="score-display">
+                    <span class="score-icon">⭐</span>
+                    <span class="score-count" id="gameScore">0</span>
+                </div>
+                <div class="time-display">
+                    <span class="time-icon">⏱️</span>
+                    <span class="time-count" id="gameTime">0:00</span>
+                </div>
+                <button class="btn-pause" onclick="pauseGame()">
+                    <span>⏸️</span>
+                </button>
+            </div>
+        </div>
 
-        function upgradeBuilding(type) {
-            const b = gameData.buildings[type];
-            const costs = { castle: 300, farm: 200, mine: 250 };
-            const cost = costs[type] * b.level;
-            if (gameData.gold >= cost) {
-                gameData.gold -= cost; b.level++;
-                if (type === 'castle') b.defense += 10;
-                else if (type === 'farm') b.production += 5;
-                else if (type === 'mine') b.production += 10;
-                updateDisplay(); showMessage('✅ تم ترقية المبنى!');
-            } else showMessage('❌ ذهب غير كافي!');
-        }
+        <!-- Canvas اللعبة -->
+        <canvas id="gameCanvas"></canvas>
 
-        function trainSoldier() {
-            if (gameData.gold >= 100 && gameData.food >= 50) {
-                gameData.gold -= 100; gameData.food -= 50; gameData.soldiers++;
-                updateDisplay(); showMessage('⚔️ تم تدريب جندي جديد!');
-            } else showMessage('❌ موارد غير كافية!');
-        }
+        <!-- أزرار التحكم للموبايل -->
+        <div class="mobile-controls" id="mobileControls">
+            <button class="control-btn control-left" id="leftBtn">
+                <span>⬅️</span>
+            </button>
+            <button class="control-btn control-jump" id="jumpBtn">
+                <span>⬆️</span>
+            </button>
+            <button class="control-btn control-right" id="rightBtn">
+                <span>➡️</span>
+            </button>
+        </div>
+    </div>
 
-        function startProduction() {
-            setInterval(() => {
-                gameData.gold += gameData.buildings.mine.production / 60;
-                gameData.food += gameData.buildings.farm.production / 60;
-                updateDisplay();
-            }, 1000);
-        }
+    <!-- شاشة الإيقاف المؤقت -->
+    <div id="pauseScreen" class="screen overlay">
+        <div class="menu-container pause-menu">
+            <h2>⏸️ إيقاف مؤقت</h2>
+            <div class="pause-stats">
+                <p>⭐ النقاط: <span id="pauseScore">0</span></p>
+                <p>💰 العملات: <span id="pauseCoins">0</span></p>
+                <p>❤️ الصحة: <span id="pauseHealth">100</span>%</p>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn-primary" onclick="resumeGame()">
+                    <span>▶️</span> استئناف
+                </button>
+                <button class="btn-secondary" onclick="restartLevel()">
+                    <span>🔄</span> إعادة المرحلة
+                </button>
+                <button class="btn-secondary" onclick="exitToMap()">
+                    <span>🗺️</span> الخروج للخريطة
+                </button>
+            </div>
+        </div>
+    </div>
 
-        function saveGame() {
-            gameData.lastUpdate = Date.now();
-            localStorage.setItem('sultanKingdom', JSON.stringify(gameData));
-            showMessage('💾 تم حفظ اللعبة!'); updateTime();
-        }
+    <!-- شاشة النتيجة -->
+    <div id="resultScreen" class="screen overlay">
+        <div class="menu-container result-menu">
+            <h2 id="resultTitle" class="result-title">🎉 مرحلة مكتملة!</h2>
+            <div class="stars-display" id="starsDisplay">
+                <div class="star-item" id="star1">⭐</div>
+                <div class="star-item" id="star2">⭐</div>
+                <div class="star-item" id="star3">⭐</div>
+            </div>
+            <div class="result-stats">
+                <div class="result-stat">
+                    <span class="result-icon">⭐</span>
+                    <div class="result-info">
+                        <p class="result-label">النقاط</p>
+                        <p class="result-value" id="finalScore">0</p>
+                    </div>
+                </div>
+                <div class="result-stat">
+                    <span class="result-icon">💰</span>
+                    <div class="result-info">
+                        <p class="result-label">العملات</p>
+                        <p class="result-value" id="finalCoins">0</p>
+                    </div>
+                </div>
+                <div class="result-stat">
+                    <span class="result-icon">⏱️</span>
+                    <div class="result-info">
+                        <p class="result-label">الوقت</p>
+                        <p class="result-value" id="finalTime">0:00</p>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn-primary" id="nextLevelBtn" onclick="nextLevel()">
+                    <span>▶️</span> المرحلة التالية
+                </button>
+                <button class="btn-secondary" onclick="restartLevel()">
+                    <span>🔄</span> إعادة المحاولة
+                </button>
+                <button class="btn-secondary" onclick="exitToMap()">
+                    <span>🗺️</span> الخريطة
+                </button>
+            </div>
+        </div>
+    </div>
 
-        function loadGame() {
-            const saved = localStorage.getItem('sultanKingdom');
-            if (saved) {
-                gameData = JSON.parse(saved);
-                const mins = (Date.now() - gameData.lastUpdate) / 60000;
-                gameData.gold += gameData.buildings.mine.production * mins;
-                gameData.food += gameData.buildings.farm.production * mins;
-                showMessage('🎉 مرحباً بعودتك! حصلت على موارد أثناء غيابك');
-            }
-        }
+    <!-- تأثيرات الجزيئات -->
+    <canvas id="particlesCanvas"></canvas>
 
-        function resetGame() {
-            if (confirm('هل أنت متأكد من إعادة تعيين اللعبة؟')) {
-                localStorage.removeItem('sultanKingdom'); location.reload();
-            }
-        }
-
-        function showMessage(msg) { alert(msg); }
-
-        function updateTime() {
-            document.getElementById('last-update').textContent = new Date().toLocaleString('ar-SA');
-        }
-
-        // PWA Install
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); deferredPrompt = e;
-            document.getElementById('install-btn').style.display = 'block';
-        });
-
-        function installApp() {
-            if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; document.getElementById('install-btn').style.display = 'none'; }
-        }
-
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(console.error);
-        }
-    </script>
+    <script src="game.js"></script>
 </body>
 </html>
