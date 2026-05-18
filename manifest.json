@@ -1,4 +1,4 @@
- {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -171,8 +171,16 @@ h2 {
     .mobile-controls {
         display: flex;
     }
-    
+
     .stats-container {
         grid-template-columns: 1fr;
+    }
+
+    .menu-container {
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 2em;
     }
 }
