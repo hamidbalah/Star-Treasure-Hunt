@@ -1,340 +1,178 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏰 مملكة المغامرات - Kingdom Adventures</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
-</head>
-<body>
-    <!-- شاشة التحميل -->
-    <div id="loadingScreen" class="screen active">
-        <div class="loading-content">
-            <h1 class="game-title">🏰 مملكة المغامرات</h1>
-            <div class="loading-bar">
-                <div class="loading-fill" id="loadingFill"></div>
-            </div>
-            <p class="loading-text">جاري التحميل...</p>
-        </div>
-    </div>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    <!-- شاشة القائمة الرئيسية -->
-    <div id="mainMenu" class="screen">
-        <div class="menu-container">
-            <h1 class="animated-title">🏰 مملكة المغامرات</h1>
-            <p class="subtitle">⚔️ ادخل القلعة واهزم الوحوش! 🐉</p>
-            <div class="menu-buttons">
-                <button class="btn-primary" onclick="showMap()">
-                    <span>🗺️</span> ابدأ اللعب
-                </button>
-                <button class="btn-secondary" onclick="showInstructions()">
-                    <span>📜</span> التعليمات
-                </button>
-                <button class="btn-secondary" onclick="showSettings()">
-                    <span>⚙️</span> الإعدادات
-                </button>
-            </div>
-            <div class="stats-container">
-                <div class="stat-box">
-                    <span class="stat-icon">⭐</span>
-                    <div class="stat-info">
-                        <p class="stat-label">أعلى نقاط</p>
-                        <p class="stat-value" id="highScore">0</p>
-                    </div>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-icon">💰</span>
-                    <div class="stat-info">
-                        <p class="stat-label">إجمالي العملات</p>
-                        <p class="stat-value" id="totalCoins">0</p>
-                    </div>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-icon">🏆</span>
-                    <div class="stat-info">
-                        <p class="stat-label">المراحل المكتملة</p>
-                        <p class="stat-value" id="completedLevels">0</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+    height: 100vh;
+}
 
-    <!-- شاشة التعليمات -->
-    <div id="instructions" class="screen">
-        <div class="menu-container">
-            <h2>📜 كيفية اللعب</h2>
-            <div class="instructions-grid">
-                <div class="instruction-card">
-                    <div class="instruction-icon">⌨️</div>
-                    <h3>التحكم</h3>
-                    <ul>
-                        <li><kbd>Space</kbd> أو <kbd>↑</kbd> للقفز</li>
-                        <li><kbd>→</kbd> <kbd>←</kbd> للحركة</li>
-                        <li><kbd>Shift</kbd> للجري السريع</li>
-                    </ul>
-                </div>
-                <div class="instruction-card">
-                    <div class="instruction-icon">🎯</div>
-                    <h3>الأهداف</h3>
-                    <ul>
-                        <li>💰 اجمع العملات الذهبية</li>
-                        <li>👹 تجنب الوحوش الخطيرة</li>
-                        <li>⚠️ تخطى العقبات</li>
-                        <li>🏰 اصل إلى القلعة</li>
-                    </ul>
-                </div>
-                <div class="instruction-card">
-                    <div class="instruction-icon">👾</div>
-                    <h3>الأعداء</h3>
-                    <ul>
-                        <li>👹 <strong>الغول:</strong> عدو بطيء</li>
-                        <li>💀 <strong>الهيكل:</strong> عدو متوسط</li>
-                        <li>🦇 <strong>الخفاش:</strong> عدو طائر</li>
-                    </ul>
-                </div>
-                <div class="instruction-card">
-                    <div class="instruction-icon">⚠️</div>
-                    <h3>العقبات</h3>
-                    <ul>
-                        <li>⚡ <strong>الأشواك:</strong> تسبب ضرر</li>
-                        <li>🪨 <strong>الصخور:</strong> عليك تجاوزها</li>
-                        <li>🕳️ <strong>الحفر:</strong> موت فوري!</li>
-                    </ul>
-                </div>
-            </div>
-            <button class="btn-primary" onclick="showMainMenu()">
-                <span>◀️</span> رجوع
-            </button>
-        </div>
-    </div>
+.screen {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
 
-    <!-- شاشة الإعدادات -->
-    <div id="settings" class="screen">
-        <div class="menu-container">
-            <h2>⚙️ الإعدادات</h2>
-            <div class="settings-content">
-                <div class="setting-item">
-                    <label>🔊 الصوت</label>
-                    <input type="range" id="volumeSlider" min="0" max="100" value="50">
-                    <span id="volumeValue">50%</span>
-                </div>
-                <div class="setting-item">
-                    <label>🎵 الموسيقى</label>
-                    <input type="checkbox" id="musicToggle" checked>
-                </div>
-                <div class="setting-item">
-                    <label>🎮 التحكم باللمس</label>
-                    <input type="checkbox" id="touchControls" checked>
-                </div>
-                <div class="setting-item">
-                    <button class="btn-danger" onclick="resetProgress()">
-                        🗑️ إعادة تعيين التقدم
-                    </button>
-                </div>
-            </div>
-            <button class="btn-primary" onclick="showMainMenu()">
-                <span>◀️</span> رجوع
-            </button>
-        </div>
-    </div>
+.screen.active {
+    display: flex;
+}
 
-    <!-- شاشة الخريطة -->
-    <div id="mapScreen" class="screen">
-        <div class="map-container">
-            <h2 class="map-title">🗺️ خريطة المملكة</h2>
-            <div class="map-world">
-                <div class="map-path-container">
-                    <!-- المرحلة 1 -->
-                    <div class="map-level completed" onclick="startLevel(1)" data-level="1">
-                        <div class="level-badge">1</div>
-                        <div class="level-icon">🌳</div>
-                        <p class="level-name">الغابة المظلمة</p>
-                        <div class="level-stars" id="stars-1">
-                            <span>⭐⭐⭐</span>
-                        </div>
-                        <div class="level-coins">💰 <span id="coins-1">0</span>/12</div>
-                    </div>
-                    
-                    <div class="map-path"></div>
-                    
-                    <!-- المرحلة 2 -->
-                    <div class="map-level locked" onclick="startLevel(2)" data-level="2">
-                        <div class="level-badge">2</div>
-                        <div class="level-icon">⛰️</div>
-                        <p class="level-name">جبل الأشباح</p>
-                        <div class="level-stars" id="stars-2">
-                            <span>☆☆☆</span>
-                        </div>
-                        <div class="level-coins">💰 <span id="coins-2">0</span>/12</div>
-                    </div>
-                    
-                    <div class="map-path"></div>
-                    
-                    <!-- المرحلة 3 -->
-                    <div class="map-level locked" onclick="startLevel(3)" data-level="3">
-                        <div class="level-badge">3</div>
-                        <div class="level-icon">🏜️</div>
-                        <p class="level-name">الصحراء المحرقة</p>
-                        <div class="level-stars" id="stars-3">
-                            <span>☆☆☆</span>
-                        </div>
-                        <div class="level-coins">💰 <span id="coins-3">0</span>/12</div>
-                    </div>
-                    
-                    <div class="map-path"></div>
-                    
-                    <!-- المرحلة 4 -->
-                    <div class="map-level locked" onclick="startLevel(4)" data-level="4">
-                        <div class="level-badge">4</div>
-                        <div class="level-icon">🏰</div>
-                        <p class="level-name">القلعة المظلمة</p>
-                        <div class="level-stars" id="stars-4">
-                            <span>☆☆☆</span>
-                        </div>
-                        <div class="level-coins">💰 <span id="coins-4">0</span>/14</div>
-                    </div>
-                </div>
-            </div>
-            <button class="btn-secondary map-back-btn" onclick="showMainMenu()">
-                <span>◀️</span> القائمة الرئيسية
-            </button>
-        </div>
-    </div>
+.menu-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 50px;
+    border-radius: 25px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+}
 
-    <!-- شاشة اللعب -->
-    <div id="gameScreen" class="screen">
-        <!-- HUD - واجهة المعلومات -->
-        <div class="hud">
-            <div class="hud-left">
-                <div class="health-container">
-                    <span class="health-icon">❤️</span>
-                    <div class="health-bar">
-                        <div class="health-fill" id="healthBar"></div>
-                        <span class="health-text" id="healthText">100</span>
-                    </div>
-                </div>
-                <div class="coin-display">
-                    <span class="coin-icon">💰</span>
-                    <span class="coin-count" id="gameCoins">0</span>
-                </div>
-            </div>
-            
-            <div class="hud-center">
-                <h3 class="level-title" id="levelName">المرحلة 1</h3>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressBar"></div>
-                    </div>
-                    <span class="progress-text" id="progressText">0%</span>
-                </div>
-            </div>
-            
-            <div class="hud-right">
-                <div class="score-display">
-                    <span class="score-icon">⭐</span>
-                    <span class="score-count" id="gameScore">0</span>
-                </div>
-                <div class="time-display">
-                    <span class="time-icon">⏱️</span>
-                    <span class="time-count" id="gameTime">0:00</span>
-                </div>
-                <button class="btn-pause" onclick="pauseGame()">
-                    <span>⏸️</span>
-                </button>
-            </div>
-        </div>
+h1 {
+    font-size: 3em;
+    color: #667eea;
+    margin-bottom: 20px;
+}
 
-        <!-- Canvas اللعبة -->
-        <canvas id="gameCanvas"></canvas>
+h2 {
+    font-size: 2em;
+    color: #667eea;
+    margin-bottom: 20px;
+}
 
-        <!-- أزرار التحكم للموبايل -->
-        <div class="mobile-controls" id="mobileControls">
-            <button class="control-btn control-left" id="leftBtn">
-                <span>⬅️</span>
-            </button>
-            <button class="control-btn control-jump" id="jumpBtn">
-                <span>⬆️</span>
-            </button>
-            <button class="control-btn control-right" id="rightBtn">
-                <span>➡️</span>
-            </button>
-        </div>
-    </div>
+.subtitle {
+    font-size: 1.3em;
+    color: #666;
+    margin-bottom: 30px;
+}
 
-    <!-- شاشة الإيقاف المؤقت -->
-    <div id="pauseScreen" class="screen overlay">
-        <div class="menu-container pause-menu">
-            <h2>⏸️ إيقاف مؤقت</h2>
-            <div class="pause-stats">
-                <p>⭐ النقاط: <span id="pauseScore">0</span></p>
-                <p>💰 العملات: <span id="pauseCoins">0</span></p>
-                <p>❤️ الصحة: <span id="pauseHealth">100</span>%</p>
-            </div>
-            <div class="menu-buttons">
-                <button class="btn-primary" onclick="resumeGame()">
-                    <span>▶️</span> استئناف
-                </button>
-                <button class="btn-secondary" onclick="restartLevel()">
-                    <span>🔄</span> إعادة المرحلة
-                </button>
-                <button class="btn-secondary" onclick="exitToMap()">
-                    <span>🗺️</span> الخروج للخريطة
-                </button>
-            </div>
-        </div>
-    </div>
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 30px 0;
+}
 
-    <!-- شاشة النتيجة -->
-    <div id="resultScreen" class="screen overlay">
-        <div class="menu-container result-menu">
-            <h2 id="resultTitle" class="result-title">🎉 مرحلة مكتملة!</h2>
-            <div class="stars-display" id="starsDisplay">
-                <div class="star-item" id="star1">⭐</div>
-                <div class="star-item" id="star2">⭐</div>
-                <div class="star-item" id="star3">⭐</div>
-            </div>
-            <div class="result-stats">
-                <div class="result-stat">
-                    <span class="result-icon">⭐</span>
-                    <div class="result-info">
-                        <p class="result-label">النقاط</p>
-                        <p class="result-value" id="finalScore">0</p>
-                    </div>
-                </div>
-                <div class="result-stat">
-                    <span class="result-icon">💰</span>
-                    <div class="result-info">
-                        <p class="result-label">العملات</p>
-                        <p class="result-value" id="finalCoins">0</p>
-                    </div>
-                </div>
-                <div class="result-stat">
-                    <span class="result-icon">⏱️</span>
-                    <div class="result-info">
-                        <p class="result-label">الوقت</p>
-                        <p class="result-value" id="finalTime">0:00</p>
-                    </div>
-                </div>
-            </div>
-            <div class="menu-buttons">
-                <button class="btn-primary" id="nextLevelBtn" onclick="nextLevel()">
-                    <span>▶️</span> المرحلة التالية
-                </button>
-                <button class="btn-secondary" onclick="restartLevel()">
-                    <span>🔄</span> إعادة المحاولة
-                </button>
-                <button class="btn-secondary" onclick="exitToMap()">
-                    <span>🗺️</span> الخريطة
-                </button>
-            </div>
-        </div>
-    </div>
+.btn-primary,
+.btn-secondary {
+    padding: 18px 40px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-    <!-- تأثيرات الجزيئات -->
-    <canvas id="particlesCanvas"></canvas>
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
 
-    <script src="game.js"></script>
-</body>
-</html>
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: #667eea;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.stat-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.stat-icon {
+    font-size: 2em;
+}
+
+.stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    z-index: 10;
+}
+
+.health-bar {
+    width: 200px;
+    height: 25px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.health-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    transition: width 0.3s ease;
+}
+
+.mobile-controls {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    gap: 20px;
+}
+
+.control-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 2em;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .mobile-controls {
+        display: flex;
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+}
