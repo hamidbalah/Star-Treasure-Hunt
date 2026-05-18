@@ -3,224 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مملكة السلاطين</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#764ba2">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="مملكة السلاطين">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        header {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 30px;
-            color: white;
-            text-align: center;
-        }
-        h1 { font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .resources { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
-        .resource { background: rgba(255,255,255,0.2); padding: 15px 30px; border-radius: 10px; font-size: 1.2em; font-weight: bold; }
-        main { padding: 30px; }
-        .kingdom { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 25px; border-radius: 15px; margin-bottom: 30px; text-align: center; }
-        .palace { margin-top: 15px; }
-        .palace p { font-size: 1.3em; margin-bottom: 15px; font-weight: bold; }
-        .buildings { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .building { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .building:hover { transform: translateY(-5px); }
-        .building h3 { font-size: 1.5em; margin-bottom: 15px; color: #333; }
-        .building p { margin: 10px 0; font-size: 1.1em; color: #555; }
-        button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 1em; cursor: pointer; margin-top: 10px; transition: all 0.3s; font-weight: bold; }
-        button:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        button:active { transform: scale(0.95); }
-        .actions { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .save-btn { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-        .reset-btn { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
-        footer { background: #333; color: white; text-align: center; padding: 15px; }
-        #install-btn { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 1.1em; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 999; font-weight: bold; }
-        @media (max-width: 768px) {
-            h1 { font-size: 1.8em; }
-            .resources { gap: 15px; }
-            .resource { padding: 10px 20px; font-size: 1em; }
-        }
-    </style>
+    <title>لعبة الفضاء</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🏰 مملكة السلاطين</h1>
-            <div class="resources">
-                <div class="resource"><span>💰 ذهب:</span> <span id="gold">1000</span></div>
-                <div class="resource"><span>🌾 طعام:</span> <span id="food">500</span></div>
-                <div class="resource"><span>⚔️ جنود:</span> <span id="soldiers">10</span></div>
+        <div id="menu" class="screen active">
+            <h1>🚀 لعبة الفضاء</h1>
+            <p class="desc">اجمع النجوم وتجنب العقبات!</p>
+            <button onclick="startGame()" class="btn">ابدأ اللعب</button>
+            <div class="stats">
+                <p>⭐ أعلى نقاط: <span id="highScore">0</span></p>
+                <p>💎 العملات: <span id="coins">0</span></p>
             </div>
-        </header>
-        <main>
-            <div class="kingdom">
-                <h2>🏛️ قصر المملكة</h2>
-                <div class="palace">
-                    <p>المستوى: <span id="palace-level">1</span></p>
-                    <button onclick="upgradePalace()">⬆️ ترقية القصر (500 ذهب)</button>
-                </div>
+        </div>
+
+        <div id="game" class="screen">
+            <div class="hud">
+                <span>النقاط: <span id="score">0</span></span>
+                <span>❤️ <span id="lives">3</span></span>
             </div>
-            <div class="buildings">
-                <div class="building">
-                    <h3>🏰 القلعة</h3>
-                    <p>المستوى: <span id="castle-level">1</span></p>
-                    <p>الدفاع: <span id="castle-defense">10</span></p>
-                    <button onclick="upgradeBuilding('castle')">⬆️ ترقية (300 ذهب)</button>
-                </div>
-                <div class="building">
-                    <h3>🌾 المزرعة</h3>
-                    <p>المستوى: <span id="farm-level">1</span></p>
-                    <p>إنتاج: <span id="farm-production">5</span> طعام/دقيقة</p>
-                    <button onclick="upgradeBuilding('farm')">⬆️ ترقية (200 ذهب)</button>
-                </div>
-                <div class="building">
-                    <h3>⛏️ منجم الذهب</h3>
-                    <p>المستوى: <span id="mine-level">1</span></p>
-                    <p>إنتاج: <span id="mine-production">10</span> ذهب/دقيقة</p>
-                    <button onclick="upgradeBuilding('mine')">⬆️ ترقية (250 ذهب)</button>
-                </div>
-                <div class="building">
-                    <h3>🛡️ الثكنة العسكرية</h3>
-                    <p>المستوى: <span id="barracks-level">1</span></p>
-                    <button onclick="trainSoldier()">⚔️ تدريب جندي (100 ذهب، 50 طعام)</button>
-                </div>
+            <canvas id="canvas"></canvas>
+            <div class="controls">
+                <button id="leftBtn" class="control">⬅️</button>
+                <button id="rightBtn" class="control">➡️</button>
             </div>
-            <div class="actions">
-                <button onclick="saveGame()" class="save-btn">💾 حفظ اللعبة</button>
-                <button onclick="resetGame()" class="reset-btn">🔄 إعادة تعيين</button>
-            </div>
-        </main>
-        <footer>
-            <p>⏰ آخر تحديث: <span id="last-update"></span></p>
-        </footer>
+        </div>
+
+        <div id="gameOver" class="screen">
+            <h1>🎮 انتهت اللعبة!</h1>
+            <p class="result">النقاط: <span id="finalScore">0</span></p>
+            <button onclick="startGame()" class="btn">العب مرة أخرى</button>
+            <button onclick="backToMenu()" class="btn secondary">القائمة الرئيسية</button>
+        </div>
     </div>
 
-    <button id="install-btn" onclick="installApp()">📲 تثبيت التطبيق</button>
-
-    <script>
-        let gameData = {
-            gold: 1000, food: 500, soldiers: 10,
-            palace: { level: 1 },
-            buildings: {
-                castle: { level: 1, defense: 10 },
-                farm: { level: 1, production: 5 },
-                mine: { level: 1, production: 10 },
-                barracks: { level: 1 }
-            },
-            lastUpdate: Date.now()
-        };
-
-        window.onload = function() { loadGame(); updateDisplay(); startProduction(); updateTime(); };
-
-        function updateDisplay() {
-            document.getElementById('gold').textContent = Math.floor(gameData.gold);
-            document.getElementById('food').textContent = Math.floor(gameData.food);
-            document.getElementById('soldiers').textContent = gameData.soldiers;
-            document.getElementById('palace-level').textContent = gameData.palace.level;
-            document.getElementById('castle-level').textContent = gameData.buildings.castle.level;
-            document.getElementById('castle-defense').textContent = gameData.buildings.castle.defense;
-            document.getElementById('farm-level').textContent = gameData.buildings.farm.level;
-            document.getElementById('farm-production').textContent = gameData.buildings.farm.production;
-            document.getElementById('mine-level').textContent = gameData.buildings.mine.level;
-            document.getElementById('mine-production').textContent = gameData.buildings.mine.production;
-            document.getElementById('barracks-level').textContent = gameData.buildings.barracks.level;
-        }
-
-        function upgradePalace() {
-            const cost = 500 * gameData.palace.level;
-            if (gameData.gold >= cost) { gameData.gold -= cost; gameData.palace.level++; updateDisplay(); showMessage('✅ تم ترقية القصر!'); }
-            else showMessage('❌ ذهب غير كافي!');
-        }
-
-        function upgradeBuilding(type) {
-            const b = gameData.buildings[type];
-            const costs = { castle: 300, farm: 200, mine: 250 };
-            const cost = costs[type] * b.level;
-            if (gameData.gold >= cost) {
-                gameData.gold -= cost; b.level++;
-                if (type === 'castle') b.defense += 10;
-                else if (type === 'farm') b.production += 5;
-                else if (type === 'mine') b.production += 10;
-                updateDisplay(); showMessage('✅ تم ترقية المبنى!');
-            } else showMessage('❌ ذهب غير كافي!');
-        }
-
-        function trainSoldier() {
-            if (gameData.gold >= 100 && gameData.food >= 50) {
-                gameData.gold -= 100; gameData.food -= 50; gameData.soldiers++;
-                updateDisplay(); showMessage('⚔️ تم تدريب جندي جديد!');
-            } else showMessage('❌ موارد غير كافية!');
-        }
-
-        function startProduction() {
-            setInterval(() => {
-                gameData.gold += gameData.buildings.mine.production / 60;
-                gameData.food += gameData.buildings.farm.production / 60;
-                updateDisplay();
-            }, 1000);
-        }
-
-        function saveGame() {
-            gameData.lastUpdate = Date.now();
-            localStorage.setItem('sultanKingdom', JSON.stringify(gameData));
-            showMessage('💾 تم حفظ اللعبة!'); updateTime();
-        }
-
-        function loadGame() {
-            const saved = localStorage.getItem('sultanKingdom');
-            if (saved) {
-                gameData = JSON.parse(saved);
-                const mins = (Date.now() - gameData.lastUpdate) / 60000;
-                gameData.gold += gameData.buildings.mine.production * mins;
-                gameData.food += gameData.buildings.farm.production * mins;
-                showMessage('🎉 مرحباً بعودتك! حصلت على موارد أثناء غيابك');
-            }
-        }
-
-        function resetGame() {
-            if (confirm('هل أنت متأكد من إعادة تعيين اللعبة؟')) {
-                localStorage.removeItem('sultanKingdom'); location.reload();
-            }
-        }
-
-        function showMessage(msg) { alert(msg); }
-
-        function updateTime() {
-            document.getElementById('last-update').textContent = new Date().toLocaleString('ar-SA');
-        }
-
-        // PWA Install
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); deferredPrompt = e;
-            document.getElementById('install-btn').style.display = 'block';
-        });
-
-        function installApp() {
-            if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; document.getElementById('install-btn').style.display = 'none'; }
-        }
-
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(console.error);
-        }
-    </script>
+    <script src="game.js"></script>
 </body>
 </html>
